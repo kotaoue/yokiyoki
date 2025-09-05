@@ -73,17 +73,17 @@ Choice (default 2): 1
 
 
 Processing repository: kotaoue/chiken
-Debug: Found 9 commits for kotaoue/chiken
-Debug: Found 4 pull requests for kotaoue/chiken
-Debug: Found 5 issues for kotaoue/chiken
+Found 9 commits for kotaoue/chiken
+Found 4 pull requests for kotaoue/chiken
+Found 5 issues for kotaoue/chiken
 Processing repository: kotaoue/gamemo
-Debug: Found 0 commits for kotaoue/gamemo
-Debug: Found 0 pull requests for kotaoue/gamemo
-Debug: Found 0 issues for kotaoue/gamemo
+Found 0 commits for kotaoue/gamemo
+Found 0 pull requests for kotaoue/gamemo
+Found 0 issues for kotaoue/gamemo
 Processing repository: kotaoue/kota.oue.me
-Debug: Found 2 commits for kotaoue/kota.oue.me
-Debug: Found 1 pull requests for kotaoue/kota.oue.me
-Debug: Found 4 issues for kotaoue/kota.oue.me
+Found 2 commits for kotaoue/kota.oue.me
+Found 1 pull requests for kotaoue/kota.oue.me
+Found 4 issues for kotaoue/kota.oue.me
 Report
 Analyzing data from 2025-08-21 to 2025-08-28 (7 days)
 
