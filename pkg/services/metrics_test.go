@@ -18,7 +18,12 @@ func TestExecute(t *testing.T) {
 	assert.NoError(t, err)
 
 	originalExecutor := repository.Executor
-	defer func() { repository.Executor = originalExecutor }()
+	defer func() {
+		repository.Executor = originalExecutor
+		repository.SetTestMode(false)
+	}()
+
+	repository.SetTestMode(true)
 
 	repository.Executor = func(endpoint string, repo models.Repository, resourceType string) ([]map[string]any, error) {
 		switch resourceType {

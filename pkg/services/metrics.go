@@ -59,8 +59,8 @@ func executeForRepo(repo models.Repository, options MetricsOptions) models.Metri
 	repoFullName := fmt.Sprintf("%s/%s", repo.Owner, repo.Name)
 
 	commits := repository.GetCommits(repo, options.Period.StartTime(), options.DetailedStats)
-	prs := repository.GetPullRequests(repo)
-	issues := repository.GetIssues(repo)
+	prs := repository.GetPullRequests(repo, options.Period.StartTime())
+	issues := repository.GetIssues(repo, options.Period.StartTime())
 
 	return calculateMetricsFromData(repoFullName, "", commits, prs, issues, options.Period, options.DetailedStats)
 }
@@ -69,8 +69,8 @@ func executeByUser(repo models.Repository, options MetricsOptions) []models.Metr
 	repoFullName := fmt.Sprintf("%s/%s", repo.Owner, repo.Name)
 
 	commits := repository.GetCommits(repo, options.Period.StartTime(), options.DetailedStats)
-	prs := repository.GetPullRequests(repo)
-	issues := repository.GetIssues(repo)
+	prs := repository.GetPullRequests(repo, options.Period.StartTime())
+	issues := repository.GetIssues(repo, options.Period.StartTime())
 
 	userCommits := groupCommitsByUser(commits, options.NormalizeUsers)
 	userPRs := groupPRsByUser(prs, options.NormalizeUsers)
