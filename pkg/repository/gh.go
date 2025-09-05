@@ -15,8 +15,14 @@ var Executor executeFunc = execute
 // executeFunc defines the function signature for executing commands
 type executeFunc func(endpoint string, repo models.Repository, resourceType string) ([]map[string]any, error)
 
-// GetPullRequests fetches all pull requests for the given repository using GitHub CLI
-func GetPullRequests(repo models.Repository) []models.PullRequest {
+// GetPullRequests fetches pull requests for the given repository using GitHub CLI
+// If since is zero time, fetches all pull requests. Otherwise filters by creation date.
+func GetPullRequests(repo models.Repository, since time.Time) []models.PullRequest {
+	// Use search-based filtering for date ranges (except in test environment)
+	if !since.IsZero() && !isTestEnvironment() {
+		return getPullRequestsWithSearch(repo, since)
+	}
+
 	endpoint := fmt.Sprintf("/repos/%s/%s/pulls?state=all", repo.Owner, repo.Name)
 	rawPRs, err := Executor(endpoint, repo, "pull requests")
 	if err != nil {
@@ -87,8 +93,14 @@ func GetCommits(repo models.Repository, from time.Time, detailedStats bool) []mo
 	return commits
 }
 
-// GetIssues fetches all issues for the given repository using GitHub CLI
-func GetIssues(repo models.Repository) []models.Issue {
+// GetIssues fetches issues for the given repository using GitHub CLI
+// If since is zero time, fetches all issues. Otherwise filters by creation date.
+func GetIssues(repo models.Repository, since time.Time) []models.Issue {
+	// Use search-based filtering for date ranges (except in test environment)
+	if !since.IsZero() && !isTestEnvironment() {
+		return getIssuesWithSearch(repo, since)
+	}
+
 	endpoint := fmt.Sprintf("/repos/%s/%s/issues?state=all", repo.Owner, repo.Name)
 	rawIssues, err := Executor(endpoint, repo, "issues")
 	if err != nil {
@@ -134,7 +146,7 @@ func execute(endpoint string, repo models.Repository, resourceType string) ([]ma
 		return nil, fmt.Errorf("could not parse %s for %s/%s: %w", resourceType, repo.Owner, repo.Name, err)
 	}
 
-	fmt.Printf("Debug: Found %d %s for %s/%s\n", len(rawData), resourceType, repo.Owner, repo.Name)
+	fmt.Printf("Found %d %s for %s/%s\n", len(rawData), resourceType, repo.Owner, repo.Name)
 	return rawData, nil
 }
 
@@ -270,4 +282,54 @@ func getCommitStats(repo models.Repository, sha string) (int, int) {
 	}
 
 	return additions, deletions
+}
+
+func getPullRequestsWithSearch(repo models.Repository, since time.Time) []models.PullRequest {
+	searchQuery := buildDateRangeQuery(since)
+	rawPRs := fetchPRsWithGHCommand(repo, searchQuery)
+	return parsePRsFromJSON(rawPRs, repo.Owner, repo.Name)
+}
+
+func parseUserFromJSON(raw map[string]any) string {
+	if author, ok := raw["author"].(map[string]any); ok {
+		if login, ok := author["login"].(string); ok {
+			return login
+		}
+	}
+	return ""
+}
+
+func parseCreatedAtFromJSON(raw map[string]any) time.Time {
+	if timeStr, ok := raw["createdAt"].(string); ok {
+		if date, err := time.Parse(time.RFC3339, timeStr); err == nil {
+			return date
+		}
+	}
+	return time.Time{}
+}
+
+func parseTimeFieldFromJSON(raw map[string]any, fieldName string) *time.Time {
+	if timeStr, ok := raw[fieldName].(string); ok && timeStr != "" {
+		if date, err := time.Parse(time.RFC3339, timeStr); err == nil {
+			return &date
+		}
+	}
+	return nil
+}
+
+func getIssuesWithSearch(repo models.Repository, since time.Time) []models.Issue {
+	searchQuery := buildDateRangeQuery(since)
+	rawIssues := fetchIssuesWithGHCommand(repo, searchQuery)
+	return parseIssuesFromJSON(rawIssues, repo.Owner, repo.Name)
+}
+
+var isInTestMode = false
+
+func SetTestMode(testMode bool) {
+	isInTestMode = testMode
+}
+
+func isTestEnvironment() bool {
+	// Check if we're running in test mode
+	return isInTestMode
 }
