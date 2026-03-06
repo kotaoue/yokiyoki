@@ -1,7 +1,7 @@
 # yokiyoki
 GitHubの情報を取得してあれこれ分析して楽しむためのコマンド
 
-> English version is available in [README.md](README.md).
+[English](README.md) | Japanese
 
 ## Usage
 

@@ -2,7 +2,7 @@
 
 A CLI tool to collect and analyze GitHub metrics for fun.
 
-> 日本語版は [README_JP.md](README_JP.md) をご覧ください。
+English | [Japanese](README_JP.md)
 
 ## Usage
 
