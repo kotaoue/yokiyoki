@@ -5,28 +5,81 @@ import (
 	"strconv"
 	"strings"
 
+	"yokiyoki/pkg/locale"
 	"yokiyoki/pkg/models"
 	"yokiyoki/pkg/services"
+
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 // Metrics handles interactive user input prompting for metrics configuration
 type Metrics struct {
-	prompt *services.Prompter
+	prompt    *services.Prompter
+	localizer *i18n.Localizer
 }
 
-// NewMetrics creates a new Metrics instance
-func NewMetrics() *Metrics {
+// NewMetrics creates a new Metrics instance with the given language ("en", "ja", etc.)
+func NewMetrics(lang string) *Metrics {
 	return &Metrics{
-		prompt: services.NewPrompter(),
+		prompt:    services.NewPrompter(),
+		localizer: locale.NewLocalizer(lang),
 	}
+}
+
+// t localizes a message by its ID. Falls back to English if the current locale
+// does not have the message, and to the raw message ID as a last resort.
+func (m *Metrics) t(id string) string {
+	msg, err := m.localizer.Localize(&i18n.LocalizeConfig{MessageID: id})
+	if err != nil {
+		if enMsg, enErr := locale.NewLocalizer("en").Localize(&i18n.LocalizeConfig{MessageID: id}); enErr == nil {
+			return enMsg
+		}
+		return id
+	}
+	return msg
+}
+
+// tWithData localizes a message by its ID with template data. Falls back to English
+// if the current locale does not have the message, and to the raw message ID as a last resort.
+func (m *Metrics) tWithData(id string, data map[string]interface{}) string {
+	cfg := &i18n.LocalizeConfig{MessageID: id, TemplateData: data}
+	msg, err := m.localizer.Localize(cfg)
+	if err != nil {
+		if enMsg, enErr := locale.NewLocalizer("en").Localize(cfg); enErr == nil {
+			return enMsg
+		}
+		return id
+	}
+	return msg
+}
+
+// GetLanguage prompts the user to select a display language and returns the language tag.
+// This is a package-level function because it must be called before a localizer is created.
+// The prompt is always shown bilingually since no language preference is known yet.
+func GetLanguage(prompt *services.Prompter) string {
+	en := locale.NewLocalizer("en")
+	config := services.SingleChoiceConfig{
+		Messages: []string{
+			en.MustLocalize(&i18n.LocalizeConfig{MessageID: "SelectLanguage"}),
+			en.MustLocalize(&i18n.LocalizeConfig{MessageID: "LanguageEnglish"}),
+			en.MustLocalize(&i18n.LocalizeConfig{MessageID: "LanguageJapanese"}),
+			en.MustLocalize(&i18n.LocalizeConfig{MessageID: "ChoiceDefault1"}),
+		},
+		Options: []services.PromptOption{
+			{Key: "1", Label: "english", Value: "en"},
+			{Key: "2", Label: "japanese", Value: "ja"},
+		},
+		DefaultKey: "1",
+	}
+	return prompt.PromptSingleChoice(config).(string)
 }
 
 // GetRepositories interactively collects repository information from user input
 func (m *Metrics) GetRepositories() []models.Repository {
 	config := services.MultipleInputConfig{
 		HeaderMessages: []string{
-			"\nリポジトリを入力してください (形式: owner/repo-name)",
-			"終了する場合は 'done' と入力:",
+			m.t("RepoInputHeader"),
+			m.t("RepoInputDone"),
 		},
 		ParseFunc: func(input string) (any, error) {
 			repo, err := m.parseRepository(input)
@@ -38,7 +91,9 @@ func (m *Metrics) GetRepositories() []models.Repository {
 		DoneKeyword: "done",
 		Formatter: func(result any) string {
 			repo := result.(models.Repository)
-			return fmt.Sprintf("%s/%s", repo.Owner, repo.Name)
+			return m.tWithData("RepoAdded", map[string]interface{}{
+				"Name": fmt.Sprintf("%s/%s", repo.Owner, repo.Name),
+			})
 		},
 	}
 
@@ -70,7 +125,7 @@ func (m *Metrics) GetRepositoriesFromArgs(repos []string) ([]models.Repository, 
 // GetDays prompts user for the number of days to analyze
 func (m *Metrics) GetDays() int {
 	config := services.SingleInputConfig{
-		Message:      "\n分析する日数を入力してください (default 30): ",
+		Message:      m.t("DaysInput"),
 		DefaultValue: 30,
 		Validator: func(input string) (int, error) {
 			days, err := strconv.Atoi(input)
@@ -93,15 +148,15 @@ func (m *Metrics) GetPeriod() (int, string, string, error) {
 
 	config := services.SingleChoiceConfig{
 		Messages: []string{
-			"\n期間:",
-			fmt.Sprintf("1) 過去7日間      %s", chronometer.GetLast7DaysDescription()),
-			fmt.Sprintf("2) 過去30日間     %s", chronometer.GetLast30DaysDescription()),
-			fmt.Sprintf("3) 先月          %s", chronometer.GetLastMonthDescription()),
-			fmt.Sprintf("4) 前半期        %s", chronometer.GetPreviousHalfDescription()),
-			fmt.Sprintf("5) 前年(1-12月)  %s", chronometer.GetPreviousYearDescription()),
-			fmt.Sprintf("6) 前年度(4-3月) %s", chronometer.GetPreviousFiscalYearDescription()),
-			"7) カスタム期間",
-			"Choice (default 2): ",
+			m.t("PeriodHeader"),
+			fmt.Sprintf("%s%s", m.t("Last7Days"), chronometer.GetLast7DaysDescription()),
+			fmt.Sprintf("%s%s", m.t("Last30Days"), chronometer.GetLast30DaysDescription()),
+			fmt.Sprintf("%s%s", m.t("LastMonth"), chronometer.GetLastMonthDescription()),
+			fmt.Sprintf("%s%s", m.t("PreviousHalf"), chronometer.GetPreviousHalfDescription()),
+			fmt.Sprintf("%s%s", m.t("PreviousYear"), chronometer.GetPreviousYearDescription()),
+			fmt.Sprintf("%s%s", m.t("PreviousFiscalYear"), chronometer.GetPreviousFiscalYearDescription()),
+			m.t("CustomPeriod"),
+			m.t("ChoiceDefault2"),
 		},
 		Options: []services.PromptOption{
 			{Key: "1", Label: "7days", Value: chronometer.GetLast7DaysResult},
@@ -125,7 +180,7 @@ func (m *Metrics) GetPeriod() (int, string, string, error) {
 
 func (m *Metrics) getCustomDateRange() (int, string, string) {
 	config := services.MultipleInputConfig{
-		HeaderMessages: []string{"カスタム期間を入力してください:"},
+		HeaderMessages: []string{m.t("CustomPeriodHeader")},
 		ParseFunc: func(input string) (any, error) {
 			return input, nil
 		},
@@ -135,7 +190,7 @@ func (m *Metrics) getCustomDateRange() (int, string, string) {
 		},
 	}
 
-	fmt.Print("開始日 (YYYY-MM-DD JST, 例: 2024-01-01): ")
+	fmt.Print(m.t("StartDatePrompt"))
 	results := m.prompt.PromptMultipleInput(config)
 
 	if len(results) >= 2 {
@@ -151,10 +206,10 @@ func (m *Metrics) getCustomDateRange() (int, string, string) {
 func (m *Metrics) GetByUser() bool {
 	config := services.SingleChoiceConfig{
 		Messages: []string{
-			"ユーザー別にメトリクスを表示しますか?",
+			m.t("ByUserPrompt"),
 			"1) Yes",
 			"2) No",
-			"Choice (default 2): ",
+			m.t("ChoiceDefault2"),
 		},
 		Options: []services.PromptOption{
 			{Key: "1", Label: "yes", Value: true},
@@ -170,10 +225,10 @@ func (m *Metrics) GetByUser() bool {
 func (m *Metrics) GetFormat() string {
 	config := services.SingleChoiceConfig{
 		Messages: []string{
-			"出力フォーマット:",
+			m.t("FormatHeader"),
 			"1) Markdown",
 			"2) CSV",
-			"Choice (default 1): ",
+			m.t("ChoiceDefault1"),
 		},
 		Options: []services.PromptOption{
 			{Key: "1", Label: "markdown", Value: "markdown"},
@@ -188,11 +243,11 @@ func (m *Metrics) GetFormat() string {
 func (m *Metrics) GetSortBy() string {
 	config := services.SingleChoiceConfig{
 		Messages: []string{
-			"ソート順:",
-			"1) リポジトリ",
-			"2) リポジトリ,ユーザー",
-			"3) ユーザー,リポジトリ",
-			"Choice (default 1): ",
+			m.t("SortHeader"),
+			fmt.Sprintf("1) %s", m.t("SortByRepository")),
+			fmt.Sprintf("2) %s", m.t("SortByRepositoryUser")),
+			fmt.Sprintf("3) %s", m.t("SortByUserRepository")),
+			m.t("ChoiceDefault1"),
 		},
 		Options: []services.PromptOption{
 			{Key: "1", Label: "repository", Value: "repository"},
@@ -208,10 +263,10 @@ func (m *Metrics) GetSortBy() string {
 func (m *Metrics) GetNormalizeUsers() bool {
 	config := services.SingleChoiceConfig{
 		Messages: []string{
-			"ユーザー名を正規化しますか ('kotaoue' と 'kota oue' をマージ)?",
+			m.t("NormalizeUsersPrompt"),
 			"1) Yes",
 			"2) No",
-			"Choice (default 2): ",
+			m.t("ChoiceDefault2"),
 		},
 		Options: []services.PromptOption{
 			{Key: "1", Label: "yes", Value: true},
@@ -227,10 +282,10 @@ func (m *Metrics) GetNormalizeUsers() bool {
 func (m *Metrics) GetDetailedStats() bool {
 	config := services.SingleChoiceConfig{
 		Messages: []string{
-			"個別のPRを確認してメトリクスを取得しますか? (処理が遅くなります)",
+			m.t("DetailedStatsPrompt"),
 			"1) Yes",
 			"2) No",
-			"Choice (default 2): ",
+			m.t("ChoiceDefault2"),
 		},
 		Options: []services.PromptOption{
 			{Key: "1", Label: "yes", Value: true},

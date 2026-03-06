@@ -134,7 +134,7 @@ func (p *Prompter) PromptMultipleInput(config MultipleInputConfig) []any {
 		}
 
 		results = append(results, result)
-		fmt.Printf("Added: %s\n", config.Formatter(result))
+		fmt.Println(config.Formatter(result))
 	}
 
 	return results

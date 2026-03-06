@@ -1,0 +1,80 @@
+[SelectLanguage]
+other = "Select language / 表示言語を選択してください:"
+
+[LanguageEnglish]
+other = "1) English"
+
+[LanguageJapanese]
+other = "2) 日本語 (Japanese)"
+
+[RepoInputHeader]
+other = "\nリポジトリを入力してください (形式: owner/repo-name)"
+
+[RepoInputDone]
+other = "終了する場合は 'done' と入力:"
+
+[RepoAdded]
+other = "追加: {{.Name}}"
+
+[DaysInput]
+other = "\n分析する日数を入力してください (default 30): "
+
+[PeriodHeader]
+other = "\n期間:"
+
+[Last7Days]
+other = "1) 過去7日間      "
+
+[Last30Days]
+other = "2) 過去30日間     "
+
+[LastMonth]
+other = "3) 先月          "
+
+[PreviousHalf]
+other = "4) 前半期        "
+
+[PreviousYear]
+other = "5) 前年(1-12月)  "
+
+[PreviousFiscalYear]
+other = "6) 前年度(4-3月) "
+
+[CustomPeriod]
+other = "7) カスタム期間"
+
+[CustomPeriodHeader]
+other = "カスタム期間を入力してください:"
+
+[StartDatePrompt]
+other = "開始日 (YYYY-MM-DD JST, 例: 2024-01-01): "
+
+[ByUserPrompt]
+other = "ユーザー別にメトリクスを表示しますか?"
+
+[FormatHeader]
+other = "出力フォーマット:"
+
+[SortHeader]
+other = "ソート順:"
+
+[SortByRepository]
+other = "リポジトリ"
+
+[SortByRepositoryUser]
+other = "リポジトリ,ユーザー"
+
+[SortByUserRepository]
+other = "ユーザー,リポジトリ"
+
+[NormalizeUsersPrompt]
+other = "ユーザー名を正規化しますか ('kotaoue' と 'kota oue' をマージ)?"
+
+[DetailedStatsPrompt]
+other = "個別のPRを確認してメトリクスを取得しますか? (処理が遅くなります)"
+
+[ChoiceDefault1]
+other = "Choice (default 1): "
+
+[ChoiceDefault2]
+other = "Choice (default 2): "
