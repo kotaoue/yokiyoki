@@ -1,31 +1,20 @@
 # yokiyoki
-GitHubの情報を取得してあれこれ分析して楽しむためのコマンド
+
+A CLI tool to collect and analyze GitHub metrics for fun.
+
+> 日本語版は [README_JP.md](README_JP.md) をご覧ください。
 
 ## Usage
 
-## メトリクス
-
-| Column               | Description                                           |
-|----------------------|-------------------------------------------------------|
-| Repository           | リポジトリ名                                          |
-| User                 | ユーザー名 (--by-user 使用時)                        |
-| Commits              | コミット数                                            |
-| PR Merge Rate        | プルリクエストのマージ率 (マージ数/作成数)            |
-| PR Merge Time        | プルリクエストの平均マージ時間 (形式: 0d 02h 30m)    |
-| Issue Resolve Rate   | イシューの解決率 (クローズ数/作成数)                  |
-| Issue Resolve Time   | イシューの平均解決時間 (形式: 0d 05h 12m)            |
-| Active Issues        | 現在のオープンイシュー数                              |
-| Lines +/-            | 追加・削除行数 (--detailed-stats 使用時)             |
-
-### インタラクティブモード
+### Interactive Mode
 
 ```bash
-$ go run .     
+$ go run .
 GitHub Metrics Collector
 ========================
 
-リポジトリを入力してください (形式: owner/repo-name)
-終了する場合は 'done' と入力:
+Enter repositories (format: owner/repo-name)
+Type 'done' to finish:
 > kotaoue/chiken
 Added: kotaoue/chiken
 > kotaoue/gamemo
@@ -34,39 +23,39 @@ Added: kotaoue/gamemo
 Added: kotaoue/kota.oue.me
 > done
 
-個別のPRを確認してメトリクスを取得しますか? (処理が遅くなります)
+Fetch metrics by checking individual PRs? (slower)
 1) Yes
 2) No
 Choice (default 2): 1
 
 
-期間:
-1) 過去7日間      (2025-08-21 to 2025-08-28 JST)
-2) 過去30日間     (2025-07-29 to 2025-08-28 JST)
-3) 先月          (2025-07-01 to 2025-07-31 JST)
-4) 前半期        (2024-10-01 to 2025-03-31 JST)
-5) 前年(1-12月)  (2024-01-01 to 2024-12-31 JST)
-6) 前年度(4-3月) (2024-04-01 to 2025-03-31 JST)
-7) カスタム期間
+Period:
+1) Last 7 days     (2025-08-21 to 2025-08-28 JST)
+2) Last 30 days    (2025-07-29 to 2025-08-28 JST)
+3) Last month      (2025-07-01 to 2025-07-31 JST)
+4) First half      (2024-10-01 to 2025-03-31 JST)
+5) Last year       (2024-01-01 to 2024-12-31 JST)
+6) Last fiscal yr  (2024-04-01 to 2025-03-31 JST)
+7) Custom range
 Choice (default 2): 1
 
-ユーザー別にメトリクスを表示しますか?
+Break down metrics by user?
 1) Yes
 2) No
 Choice (default 2): 1
 
-出力フォーマット:
+Output format:
 1) Markdown
 2) CSV
-Choice (default 1):  
+Choice (default 1):
 
-ソート順:
-1) リポジトリ
-2) リポジトリ,ユーザー
-3) ユーザー,リポジトリ
-Choice (default 1): 
+Sort order:
+1) repository
+2) repository,user
+3) user,repository
+Choice (default 1):
 
-ユーザー名を正規化しますか ('kotaoue' と 'kota oue' をマージ)?
+Normalize usernames (merge 'kotaoue' and 'kota oue')?
 1) Yes
 2) No
 Choice (default 2): 1
@@ -94,9 +83,23 @@ Analyzing data from 2025-08-21 to 2025-08-28 (7 days)
 | kotaoue/kota.oue.me | kotaoue |       2 | 0/1 (0%)      | -             | 0/1 (0%)           | -                  |             1 | +6/-2     |
 ```
 
-### コマンドラインモード
+### Command-line Mode
 
 ```bash
-# インタラクティブモードと同じ設定  
+# Same settings as the interactive example above
 go run . --days 7 --by-user --normalize-users --detailed-stats --format markdown --sort-by repository kotaoue/chiken kotaoue/gamemo kotaoue/kota.oue.me
 ```
+
+## Metrics
+
+| Column               | Description                                                    |
+|----------------------|----------------------------------------------------------------|
+| Repository           | Repository name                                                |
+| User                 | Username (shown when using `--by-user`)                        |
+| Commits              | Number of commits                                              |
+| PR Merge Rate        | Pull request merge rate (merged / created)                     |
+| PR Merge Time        | Average time to merge a pull request (format: 0d 02h 30m)     |
+| Issue Resolve Rate   | Issue resolution rate (closed / created)                       |
+| Issue Resolve Time   | Average time to resolve an issue (format: 0d 05h 12m)          |
+| Active Issues        | Number of currently open issues                                |
+| Lines +/-            | Lines added / deleted (shown when using `--detailed-stats`)    |
