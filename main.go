@@ -70,6 +70,7 @@ func runCollect(cmd *cobra.Command, args []string) {
 	lang := "en"
 	if len(args) == 0 {
 		lang = interactive.GetLanguage(services.NewPrompter())
+		_ = interactive.NewMetrics(lang).GetMode()
 	}
 
 	repos := collectRepositories(cmd, args, lang)
