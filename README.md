@@ -20,6 +20,7 @@ Choice (default 1):
 
 Mode:
 1) Metrics
+2) Commit list
 Choice (default 1): 
 
 Enter repository (format: owner/repo-name)
@@ -112,3 +113,70 @@ go run . --days 7 --by-user --normalize-users --detailed-stats --format markdown
 | Issue Resolve Time   | Average time to resolve an issue (format: 0d 05h 12m)          |
 | Active Issues        | Number of currently open issues                                |
 | Lines +/-            | Lines added / deleted (shown when using `--detailed-stats`)    |
+
+## Commit List Mode
+
+Select **2) Commit list** at the mode prompt to retrieve commits sorted by date (newest first).
+
+### Interactive example
+
+```bash
+$ go run .
+GitHub Metrics Collector
+========================
+
+Select language / 表示言語を選択してください:
+1) English
+2) 日本語 (Japanese)
+Choice (default 1): 1
+
+Mode:
+1) Metrics
+2) Commit list
+Choice (default 1): 2
+
+Enter repository (format: owner/repo-name)
+Type 'done' to finish:
+> kotaoue/chiken
+Added: kotaoue/chiken
+> done
+
+Fetch metrics by checking individual PRs? (slower)
+1) Yes
+2) No
+Choice (default 2): 2
+
+
+Period:
+1) Last 7 days    (2025-08-21 to 2025-08-28 JST)
+2) Last 30 days   (2025-07-29 to 2025-08-28 JST)
+...
+Choice (default 2): 1
+
+Output format:
+1) Markdown
+2) CSV
+Choice (default 1): 1
+
+
+Processing repository: kotaoue/chiken
+Found 9 commits for kotaoue/chiken
+Report
+Analyzing data from 2025-08-21 to 2025-08-28 (7 days)
+
+| Repository     | SHA     | Author  | Date             | Message                         |
+|----------------|---------|---------|------------------|---------------------------------|
+| kotaoue/chiken | abc1234 | kotaoue | 2025-08-28 10:00 | Fix typo in README              |
+| kotaoue/chiken | def5678 | kotaoue | 2025-08-27 15:30 | Add new feature                 |
+```
+
+### Commit list columns
+
+| Column     | Description                                                 |
+|------------|-------------------------------------------------------------|
+| Repository | Repository name                                             |
+| SHA        | Short commit hash (7 characters)                            |
+| Author     | Commit author                                               |
+| Date       | Commit date (JST, format: YYYY-MM-DD HH:mm)                 |
+| Message    | First line of the commit message (truncated at 72 chars)    |
+| Lines +/-  | Lines added / deleted (shown when using `--detailed-stats`) |

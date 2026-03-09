@@ -7,6 +7,9 @@ other = "\nモード:"
 [ModeMetrics]
 other = "1) メトリクス取得"
 
+[ModeCommits]
+other = "2) コミット一覧取得"
+
 [LanguageEnglish]
 other = "1) English"
 
