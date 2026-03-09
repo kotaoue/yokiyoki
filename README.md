@@ -13,7 +13,12 @@ $ go run .
 GitHub Metrics Collector
 ========================
 
-Enter repositories (format: owner/repo-name)
+Select language / 表示言語を選択してください:
+1) English
+2) 日本語 (Japanese)
+Choice (default 1): 
+
+Enter repository (format: owner/repo-name)
 Type 'done' to finish:
 > kotaoue/chiken
 Added: kotaoue/chiken
@@ -30,12 +35,12 @@ Choice (default 2): 1
 
 
 Period:
-1) Last 7 days     (2025-08-21 to 2025-08-28 JST)
-2) Last 30 days    (2025-07-29 to 2025-08-28 JST)
-3) Last month      (2025-07-01 to 2025-07-31 JST)
-4) First half      (2024-10-01 to 2025-03-31 JST)
-5) Last year       (2024-01-01 to 2024-12-31 JST)
-6) Last fiscal yr  (2024-04-01 to 2025-03-31 JST)
+1) Last 7 days    (2025-08-21 to 2025-08-28 JST)
+2) Last 30 days   (2025-07-29 to 2025-08-28 JST)
+3) Last month     (2025-07-01 to 2025-07-31 JST)
+4) First half     (2024-10-01 to 2025-03-31 JST)
+5) Last year      (2024-01-01 to 2024-12-31 JST)
+6) Last fiscal yr (2024-04-01 to 2025-03-31 JST)
 7) Custom range
 Choice (default 2): 1
 

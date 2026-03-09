@@ -1,0 +1,80 @@
+[SelectLanguage]
+other = "Select language / 表示言語を選択してください:"
+
+[LanguageEnglish]
+other = "1) English"
+
+[LanguageJapanese]
+other = "2) 日本語 (Japanese)"
+
+[RepoInputHeader]
+other = "\nEnter repository (format: owner/repo-name)"
+
+[RepoInputDone]
+other = "Type 'done' to finish:"
+
+[RepoAdded]
+other = "Added: {{.Name}}"
+
+[DaysInput]
+other = "\nEnter the number of days to analyze (default 30): "
+
+[PeriodHeader]
+other = "\nPeriod:"
+
+[Last7Days]
+other = "1) Last 7 days    "
+
+[Last30Days]
+other = "2) Last 30 days   "
+
+[LastMonth]
+other = "3) Last month     "
+
+[PreviousHalf]
+other = "4) First half     "
+
+[PreviousYear]
+other = "5) Last year      "
+
+[PreviousFiscalYear]
+other = "6) Last fiscal yr "
+
+[CustomPeriod]
+other = "7) Custom range"
+
+[CustomPeriodHeader]
+other = "Enter custom period:"
+
+[StartDatePrompt]
+other = "Start date (YYYY-MM-DD JST, e.g., 2024-01-01): "
+
+[ByUserPrompt]
+other = "Break down metrics by user?"
+
+[FormatHeader]
+other = "Output format:"
+
+[SortHeader]
+other = "Sort order:"
+
+[SortByRepository]
+other = "repository"
+
+[SortByRepositoryUser]
+other = "repository,user"
+
+[SortByUserRepository]
+other = "user,repository"
+
+[NormalizeUsersPrompt]
+other = "Normalize usernames (merge 'kotaoue' and 'kota oue')?"
+
+[DetailedStatsPrompt]
+other = "Fetch metrics by checking individual PRs? (slower)"
+
+[ChoiceDefault1]
+other = "Choice (default 1): "
+
+[ChoiceDefault2]
+other = "Choice (default 2): "

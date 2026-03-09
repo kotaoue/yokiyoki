@@ -12,14 +12,19 @@ $ go run .
 GitHub Metrics Collector
 ========================
 
+Select language / 表示言語を選択してください:
+1) English
+2) 日本語 (Japanese)
+Choice (default 1): 2
+
 リポジトリを入力してください (形式: owner/repo-name)
 終了する場合は 'done' と入力:
 > kotaoue/chiken
-Added: kotaoue/chiken
+追加: kotaoue/chiken
 > kotaoue/gamemo
-Added: kotaoue/gamemo
+追加: kotaoue/gamemo
 > kotaoue/kota.oue.me
-Added: kotaoue/kota.oue.me
+追加: kotaoue/kota.oue.me
 > done
 
 個別のPRを確認してメトリクスを取得しますか? (処理が遅くなります)

@@ -1,10 +1,15 @@
 module yokiyoki
 
-go 1.24
+go 1.24.0
+
+toolchain go1.24.13
 
 require (
+	github.com/BurntSushi/toml v1.6.0
+	github.com/nicksnyder/go-i18n/v2 v2.6.1
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.11.1
+	golang.org/x/text v0.34.0
 )
 
 require (

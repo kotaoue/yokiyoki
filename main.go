@@ -66,21 +66,27 @@ func runCollect(cmd *cobra.Command, args []string) {
 	fmt.Println("GitHub Metrics Collector")
 	fmt.Println("========================")
 
-	repos := collectRepositories(cmd, args)
+	// Ask for language when running in interactive mode (no repository arguments provided)
+	lang := "en"
+	if len(args) == 0 {
+		lang = interactive.GetLanguage(services.NewPrompter())
+	}
+
+	repos := collectRepositories(cmd, args, lang)
 	if len(repos) == 0 {
 		fmt.Println("No repositories selected. Exiting.")
 		return
 	}
 
-	collectMissingOptions(cmd)
+	collectMissingOptions(cmd, lang)
 
 	period := createPeriod()
 	allMetrics := processRepositories(repos, period)
 	outputResults(allMetrics, period)
 }
 
-func collectRepositories(cmd *cobra.Command, args []string) []models.Repository {
-	metricsInput := interactive.NewMetrics()
+func collectRepositories(cmd *cobra.Command, args []string, lang string) []models.Repository {
+	metricsInput := interactive.NewMetrics(lang)
 
 	if len(args) > 0 {
 		repos, err := metricsInput.GetRepositoriesFromArgs(args)
@@ -94,8 +100,8 @@ func collectRepositories(cmd *cobra.Command, args []string) []models.Repository 
 	return metricsInput.GetRepositories()
 }
 
-func collectMissingOptions(cmd *cobra.Command) {
-	metricsInput := interactive.NewMetrics()
+func collectMissingOptions(cmd *cobra.Command, lang string) {
+	metricsInput := interactive.NewMetrics(lang)
 
 	if !cmd.Flags().Changed("detailed-stats") {
 		detailedStats = metricsInput.GetDetailedStats()
