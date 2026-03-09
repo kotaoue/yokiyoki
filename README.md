@@ -18,6 +18,10 @@ Select language / 表示言語を選択してください:
 2) 日本語 (Japanese)
 Choice (default 1): 
 
+Mode:
+1) Metrics
+Choice (default 1): 
+
 Enter repository (format: owner/repo-name)
 Type 'done' to finish:
 > kotaoue/chiken

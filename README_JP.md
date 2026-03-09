@@ -17,6 +17,10 @@ Select language / 表示言語を選択してください:
 2) 日本語 (Japanese)
 Choice (default 1): 2
 
+モード:
+1) メトリクス取得
+Choice (default 1): 
+
 リポジトリを入力してください (形式: owner/repo-name)
 終了する場合は 'done' と入力:
 > kotaoue/chiken
