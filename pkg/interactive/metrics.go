@@ -74,6 +74,22 @@ func GetLanguage(prompt *services.Prompter) string {
 	return prompt.PromptSingleChoice(config).(string)
 }
 
+// GetMode prompts the user to select a mode and returns the mode name.
+func (m *Metrics) GetMode() string {
+	config := services.SingleChoiceConfig{
+		Messages: []string{
+			m.t("ModeHeader"),
+			m.t("ModeMetrics"),
+			m.t("ChoiceDefault1"),
+		},
+		Options: []services.PromptOption{
+			{Key: "1", Label: "metrics", Value: "metrics"},
+		},
+		DefaultKey: "1",
+	}
+	return m.prompt.PromptSingleChoice(config).(string)
+}
+
 // GetRepositories interactively collects repository information from user input
 func (m *Metrics) GetRepositories() []models.Repository {
 	config := services.MultipleInputConfig{

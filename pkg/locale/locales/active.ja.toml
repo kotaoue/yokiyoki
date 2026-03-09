@@ -1,6 +1,12 @@
 [SelectLanguage]
 other = "Select language / 表示言語を選択してください:"
 
+[ModeHeader]
+other = "\nモード:"
+
+[ModeMetrics]
+other = "1) メトリクス取得"
+
 [LanguageEnglish]
 other = "1) English"
 
