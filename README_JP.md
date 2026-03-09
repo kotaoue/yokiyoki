@@ -107,3 +107,43 @@ go run . --days 7 --by-user --normalize-users --detailed-stats --format markdown
 | Issue Resolve Time   | イシューの平均解決時間 (形式: 0d 05h 12m)            |
 | Active Issues        | 現在のオープンイシュー数                              |
 | Lines +/-            | 追加・削除行数 (--detailed-stats 使用時)             |
+
+---
+
+## conversation サブコマンド
+
+指定した期間内のPRおよびIssueのコメントスレッドを取得・表示します。
+
+### 使い方
+
+```bash
+go run . conversation owner/repo
+go run . conversation --days 7 owner/repo1 owner/repo2
+go run . conversation --start 2024-01-01 --end 2024-01-31 owner/repo
+```
+
+### オプション
+
+| フラグ        | 説明                                                  |
+|---------------|-------------------------------------------------------|
+| `-d, --days`  | 分析する日数 (デフォルト 30)                          |
+| `--start`     | 開始日 (YYYY-MM-DD 形式、例: 2024-01-01)             |
+| `--end`       | 終了日 (YYYY-MM-DD 形式、例: 2024-01-31)             |
+
+### 出力例
+
+```
+kotaoue/chiken (3 conversations)
+---------------------------------
+
+PR #42 [merged] by alice - Fix login bug (2024-01-10)
+  bob (2024-01-11 09:30): LGTM, nice cleanup
+  alice (2024-01-11 10:00): Thanks, merging
+
+PR #43 [open] by carol - Add dark mode (2024-01-12)
+  (no comments)
+
+Issue #57 [closed] by bob - Button misaligned on mobile (2024-01-08)
+  alice (2024-01-09 14:22): Confirmed, will fix in next PR
+  bob (2024-01-10 11:05): Fixed in #42, closing
+```
