@@ -110,40 +110,57 @@ go run . --days 7 --by-user --normalize-users --detailed-stats --format markdown
 
 ---
 
-## conversation サブコマンド
+## commits サブコマンド
 
 指定した期間内のPRおよびIssueのコメントスレッドを取得・表示します。
+リポジトリと期間はすべて対話形式で選択します。
 
 ### 使い方
 
 ```bash
-go run . conversation owner/repo
-go run . conversation --days 7 owner/repo1 owner/repo2
-go run . conversation --start 2024-01-01 --end 2024-01-31 owner/repo
+go run . commits
 ```
 
-### オプション
+対話形式で以下を順番に選択します:
+1. 表示言語の選択
+2. リポジトリの入力 (`owner/repo` 形式で入力、`done` で終了)
+3. 分析期間の選択
 
-| フラグ        | 説明                                                  |
-|---------------|-------------------------------------------------------|
-| `-d, --days`  | 分析する日数 (デフォルト 30)                          |
-| `--start`     | 開始日 (YYYY-MM-DD 形式、例: 2024-01-01)             |
-| `--end`       | 終了日 (YYYY-MM-DD 形式、例: 2024-01-31)             |
-
-### 出力例
+### 実行例
 
 ```
-kotaoue/chiken (3 conversations)
----------------------------------
+$ go run . commits
+GitHub Conversation Collector
+=============================
 
-PR #42 [merged] by alice - Fix login bug (2024-01-10)
-  bob (2024-01-11 09:30): LGTM, nice cleanup
-  alice (2024-01-11 10:00): Thanks, merging
+Select language / 表示言語を選択してください:
+1) English
+2) 日本語 (Japanese)
+Choice (default 1): 2
 
-PR #43 [open] by carol - Add dark mode (2024-01-12)
+リポジトリを入力してください (形式: owner/repo-name)
+終了する場合は 'done' と入力:
+> kotaoue/chiken
+追加: kotaoue/chiken
+> done
+
+期間:
+1) 過去7日間      (2026-03-02 to 2026-03-09 JST)
+2) 過去30日間     (2026-02-07 to 2026-03-09 JST)
+...
+Choice (default 2): 1
+
+Processing repository: kotaoue/chiken
+Report
+Analyzing data from 2026-03-02 to 2026-03-09 (7 days)
+
+kotaoue/chiken (2 conversations)
+----------------------------------
+
+PR #42 [merged] by alice - Fix login bug (2026-03-03)
+  bob (2026-03-04 09:30): LGTM, nice cleanup
+  alice (2026-03-04 10:00): Thanks, merging
+
+Issue #57 [open] by carol - Add dark mode (2026-03-05)
   (no comments)
-
-Issue #57 [closed] by bob - Button misaligned on mobile (2024-01-08)
-  alice (2024-01-09 14:22): Confirmed, will fix in next PR
-  bob (2024-01-10 11:05): Fixed in #42, closing
 ```

@@ -111,40 +111,57 @@ go run . --days 7 --by-user --normalize-users --detailed-stats --format markdown
 
 ---
 
-## conversation subcommand
+## commits subcommand
 
 Fetch and display the comment threads on PRs and Issues within a given time period.
+Repositories and time period are selected interactively.
 
 ### Usage
 
 ```bash
-go run . conversation owner/repo
-go run . conversation --days 7 owner/repo1 owner/repo2
-go run . conversation --start 2024-01-01 --end 2024-01-31 owner/repo
+go run . commits
 ```
 
-### Options
+Interactive prompts guide you through:
+1. Language selection
+2. Repository selection (enter one or more `owner/repo`, type `done` to finish)
+3. Time period selection
 
-| Flag        | Description                                          |
-|-------------|------------------------------------------------------|
-| `-d, --days`  | Number of days to analyze (default 30)             |
-| `--start`     | Start date (YYYY-MM-DD format, e.g., 2024-01-01)  |
-| `--end`       | End date (YYYY-MM-DD format, e.g., 2024-01-31)    |
-
-### Example Output
+### Example Session
 
 ```
-kotaoue/chiken (3 conversations)
----------------------------------
+$ go run . commits
+GitHub Conversation Collector
+=============================
 
-PR #42 [merged] by alice - Fix login bug (2024-01-10)
-  bob (2024-01-11 09:30): LGTM, nice cleanup
-  alice (2024-01-11 10:00): Thanks, merging
+Select language / 表示言語を選択してください:
+1) English
+2) 日本語 (Japanese)
+Choice (default 1):
 
-PR #43 [open] by carol - Add dark mode (2024-01-12)
+Enter repository (format: owner/repo-name)
+Type 'done' to finish:
+> kotaoue/chiken
+Added: kotaoue/chiken
+> done
+
+Period:
+1) Last 7 days    (2026-03-02 to 2026-03-09 JST)
+2) Last 30 days   (2026-02-07 to 2026-03-09 JST)
+...
+Choice (default 2): 1
+
+Processing repository: kotaoue/chiken
+Report
+Analyzing data from 2026-03-02 to 2026-03-09 (7 days)
+
+kotaoue/chiken (2 conversations)
+----------------------------------
+
+PR #42 [merged] by alice - Fix login bug (2026-03-03)
+  bob (2026-03-04 09:30): LGTM, nice cleanup
+  alice (2026-03-04 10:00): Thanks, merging
+
+Issue #57 [open] by carol - Add dark mode (2026-03-05)
   (no comments)
-
-Issue #57 [closed] by bob - Button misaligned on mobile (2024-01-08)
-  alice (2024-01-09 14:22): Confirmed, will fix in next PR
-  bob (2024-01-10 11:05): Fixed in #42, closing
 ```

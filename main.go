@@ -12,41 +12,36 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var conversationCmd = &cobra.Command{
-	Use:   "conversation [repositories...]",
-	Short: "Fetch PR and Issue conversations",
+var commitsCmd = &cobra.Command{
+	Use:   "commits",
+	Short: "Fetch PR and Issue conversations interactively",
 	Long: `Fetch and display PR and Issue conversations (comments) from repositories.
+Repositories and time period are selected interactively.
 
-Examples:
-  yokiyoki conversation owner/repo
-  yokiyoki conversation --days 7 owner/repo
-  yokiyoki conversation --start 2024-01-01 --end 2024-01-31 owner/repo`,
-	Run: runConversation,
+Example:
+  yokiyoki commits`,
+	Run: runCommits,
 }
 
-func runConversation(cmd *cobra.Command, args []string) {
+func runCommits(cmd *cobra.Command, args []string) {
 	fmt.Println("GitHub Conversation Collector")
 	fmt.Println("=============================")
 
-	lang := "en"
-	if len(args) == 0 {
-		lang = interactive.GetLanguage(services.NewPrompter())
-	}
+	lang := interactive.GetLanguage(services.NewPrompter())
 
-	repos := collectRepositories(cmd, args, lang)
+	metricsInput := interactive.NewMetrics(lang)
+
+	repos := metricsInput.GetRepositories()
 	if len(repos) == 0 {
 		fmt.Println("No repositories selected. Exiting.")
 		return
 	}
 
-	if !cmd.Flags().Changed("days") && !cmd.Flags().Changed("start") && !cmd.Flags().Changed("end") {
-		metricsInput := interactive.NewMetrics(lang)
-		var err error
-		days, startDate, endDate, err = metricsInput.GetPeriod()
-		if err != nil {
-			fmt.Printf("Error getting period: %v\n", err)
-			os.Exit(1)
-		}
+	var err error
+	days, startDate, endDate, err = metricsInput.GetPeriod()
+	if err != nil {
+		fmt.Printf("Error getting period: %v\n", err)
+		os.Exit(1)
 	}
 
 	period := createPeriod()
@@ -116,10 +111,7 @@ func main() {
 	rootCmd.Flags().BoolVarP(&normalizeUsers, "normalize-users", "n", false, "Normalize usernames by removing spaces (merge 'kotaoue' and 'kota oue')")
 	rootCmd.Flags().BoolVar(&detailedStats, "detailed-stats", false, "Enable detailed line change statistics (requires individual API calls per commit - slower)")
 
-	conversationCmd.Flags().IntVarP(&days, "days", "d", 30, "Number of days to analyze (default 30)")
-	conversationCmd.Flags().StringVar(&startDate, "start", "", "Start date (YYYY-MM-DD format, e.g., 2024-01-01)")
-	conversationCmd.Flags().StringVar(&endDate, "end", "", "End date (YYYY-MM-DD format, e.g., 2024-01-31)")
-	rootCmd.AddCommand(conversationCmd)
+	rootCmd.AddCommand(commitsCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {
