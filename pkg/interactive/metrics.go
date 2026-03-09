@@ -80,10 +80,12 @@ func (m *Metrics) GetMode() string {
 		Messages: []string{
 			m.t("ModeHeader"),
 			m.t("ModeMetrics"),
+			m.t("ModeCommits"),
 			m.t("ChoiceDefault1"),
 		},
 		Options: []services.PromptOption{
 			{Key: "1", Label: "metrics", Value: "metrics"},
+			{Key: "2", Label: "commits", Value: "commits"},
 		},
 		DefaultKey: "1",
 	}

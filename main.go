@@ -68,14 +68,23 @@ func runCollect(cmd *cobra.Command, args []string) {
 
 	// Ask for language when running in interactive mode (no repository arguments provided)
 	lang := "en"
+	mode := "metrics"
 	if len(args) == 0 {
 		lang = interactive.GetLanguage(services.NewPrompter())
-		_ = interactive.NewMetrics(lang).GetMode()
+		mode = interactive.NewMetrics(lang).GetMode()
 	}
 
 	repos := collectRepositories(cmd, args, lang)
 	if len(repos) == 0 {
 		fmt.Println("No repositories selected. Exiting.")
+		return
+	}
+
+	if mode == "commits" {
+		collectMissingCommitOptions(cmd, lang)
+		period := createPeriod()
+		allCommits := processRepositoriesForCommits(repos, period)
+		outputCommitResults(allCommits, period)
 		return
 	}
 
@@ -184,5 +193,60 @@ func outputResults(allMetrics []models.Metrics, period *services.Chronometer) {
 	} else {
 		table := formatter.NewMetricsTable(allMetrics)
 		table.Output(byUser, detailedStats)
+	}
+}
+
+func collectMissingCommitOptions(cmd *cobra.Command, lang string) {
+	metricsInput := interactive.NewMetrics(lang)
+
+	if !cmd.Flags().Changed("detailed-stats") {
+		detailedStats = metricsInput.GetDetailedStats()
+	}
+
+	if !cmd.Flags().Changed("days") && !cmd.Flags().Changed("start") && !cmd.Flags().Changed("end") {
+		var err error
+		days, startDate, endDate, err = metricsInput.GetPeriod()
+		if err != nil {
+			fmt.Printf("Error getting period: %v\n", err)
+			os.Exit(1)
+		}
+	}
+
+	if !cmd.Flags().Changed("format") {
+		format = metricsInput.GetFormat()
+	}
+}
+
+func processRepositoriesForCommits(repos []models.Repository, period *services.Chronometer) []models.Commit {
+	var allCommits []models.Commit
+
+	fmt.Println()
+	for _, repo := range repos {
+		fmt.Printf("Processing repository: %s/%s\n", repo.Owner, repo.Name)
+		opts := services.CommitsOptions{
+			Period:        period,
+			DetailedStats: detailedStats,
+		}
+		commits := services.ExecuteCommits(repo, opts)
+		allCommits = append(allCommits, commits...)
+	}
+
+	services.SortCommitsByDate(allCommits)
+	return allCommits
+}
+
+func outputCommitResults(allCommits []models.Commit, period *services.Chronometer) {
+	fmt.Println("Report")
+	fmt.Printf("Analyzing data from %s to %s (%d days)\n\n",
+		period.StartTime().Format("2006-01-02"),
+		period.EndTime().Format("2006-01-02"),
+		days)
+
+	if format == "csv" {
+		csv := formatter.NewCommitsCsv(allCommits)
+		csv.Output(detailedStats)
+	} else {
+		table := formatter.NewCommitsTable(allCommits)
+		table.Output(detailedStats)
 	}
 }
