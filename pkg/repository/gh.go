@@ -123,6 +123,10 @@ func GetIssues(repo models.Repository, since time.Time) []models.Issue {
 			Labels:    parseLabels(raw),
 		}
 
+		if url, ok := raw["html_url"].(string); ok {
+			issue.URL = url
+		}
+
 		if closedTime := parseTimeField(raw, "closed_at"); closedTime != nil {
 			issue.ClosedAt = closedTime
 		}

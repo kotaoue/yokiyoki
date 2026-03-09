@@ -12,6 +12,66 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var conversationCmd = &cobra.Command{
+	Use:   "conversation [repositories...]",
+	Short: "Fetch PR and Issue conversations",
+	Long: `Fetch and display PR and Issue conversations (comments) from repositories.
+
+Examples:
+  yokiyoki conversation owner/repo
+  yokiyoki conversation --days 7 owner/repo
+  yokiyoki conversation --start 2024-01-01 --end 2024-01-31 owner/repo`,
+	Run: runConversation,
+}
+
+func runConversation(cmd *cobra.Command, args []string) {
+	fmt.Println("GitHub Conversation Collector")
+	fmt.Println("=============================")
+
+	lang := "en"
+	if len(args) == 0 {
+		lang = interactive.GetLanguage(services.NewPrompter())
+	}
+
+	repos := collectRepositories(cmd, args, lang)
+	if len(repos) == 0 {
+		fmt.Println("No repositories selected. Exiting.")
+		return
+	}
+
+	if !cmd.Flags().Changed("days") && !cmd.Flags().Changed("start") && !cmd.Flags().Changed("end") {
+		metricsInput := interactive.NewMetrics(lang)
+		var err error
+		days, startDate, endDate, err = metricsInput.GetPeriod()
+		if err != nil {
+			fmt.Printf("Error getting period: %v\n", err)
+			os.Exit(1)
+		}
+	}
+
+	period := createPeriod()
+
+	fmt.Println()
+	var allConversations []models.Conversation
+	for _, repo := range repos {
+		fmt.Printf("Processing repository: %s/%s\n", repo.Owner, repo.Name)
+		options := services.ConversationOptions{
+			Period: period,
+		}
+		convs := services.ExecuteConversation(repo, options)
+		allConversations = append(allConversations, convs...)
+	}
+
+	fmt.Println("Report")
+	fmt.Printf("Analyzing data from %s to %s (%d days)\n\n",
+		period.StartTime().Format("2006-01-02"),
+		period.EndTime().Format("2006-01-02"),
+		days)
+
+	conv := formatter.NewConversationFormatter(allConversations)
+	conv.Output()
+}
+
 var (
 	days           int
 	startDate      string
@@ -55,6 +115,11 @@ func main() {
 	rootCmd.Flags().StringVarP(&sortBy, "sort-by", "s", "repository", "Sort order: repository, repository,user, user,repository")
 	rootCmd.Flags().BoolVarP(&normalizeUsers, "normalize-users", "n", false, "Normalize usernames by removing spaces (merge 'kotaoue' and 'kota oue')")
 	rootCmd.Flags().BoolVar(&detailedStats, "detailed-stats", false, "Enable detailed line change statistics (requires individual API calls per commit - slower)")
+
+	conversationCmd.Flags().IntVarP(&days, "days", "d", 30, "Number of days to analyze (default 30)")
+	conversationCmd.Flags().StringVar(&startDate, "start", "", "Start date (YYYY-MM-DD format, e.g., 2024-01-01)")
+	conversationCmd.Flags().StringVar(&endDate, "end", "", "End date (YYYY-MM-DD format, e.g., 2024-01-31)")
+	rootCmd.AddCommand(conversationCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {

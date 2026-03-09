@@ -48,7 +48,7 @@ func fetchIssuesWithGHCommand(repo models.Repository, searchQuery string) []map[
 		"--state", "all",
 		"--search", searchQuery,
 		"--limit", "1000",
-		"--json", "number,title,state,author,createdAt,closedAt,labels")
+		"--json", "number,title,state,author,createdAt,closedAt,labels,url")
 
 	output, err := cmd.Output()
 	if err != nil {
@@ -125,6 +125,10 @@ func parseIssuesFromJSON(rawIssues []map[string]any, owner, name string) []model
 			Author:    parseUserFromJSON(raw),
 			CreatedAt: parseCreatedAtFromJSON(raw),
 			Labels:    parseLabelsFromJSON(raw),
+		}
+
+		if url, ok := raw["url"].(string); ok {
+			issue.URL = url
 		}
 
 		if closedTime := parseTimeFieldFromJSON(raw, "closedAt"); closedTime != nil {

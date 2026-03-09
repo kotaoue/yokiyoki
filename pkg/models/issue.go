@@ -10,4 +10,5 @@ type Issue struct {
 	CreatedAt time.Time  `json:"created_at"`
 	ClosedAt  *time.Time `json:"closed_at"`
 	Labels    []string   `json:"labels"`
+	URL       string     `json:"url"`
 }
