@@ -51,7 +51,7 @@ func main() {
 	rootCmd.Flags().StringVar(&startDate, "start", "", "Start date (YYYY-MM-DD format, e.g., 2024-01-01)")
 	rootCmd.Flags().StringVar(&endDate, "end", "", "End date (YYYY-MM-DD format, e.g., 2024-01-31)")
 	rootCmd.Flags().BoolVarP(&byUser, "by-user", "u", false, "Break down metrics by user")
-	rootCmd.Flags().StringVarP(&format, "format", "f", "markdown", "Output format: markdown or csv")
+	rootCmd.Flags().StringVarP(&format, "format", "f", "markdown", "Output format: markdown, csv, or json")
 	rootCmd.Flags().StringVarP(&sortBy, "sort-by", "s", "repository", "Sort order: repository, repository,user, user,repository")
 	rootCmd.Flags().BoolVarP(&normalizeUsers, "normalize-users", "n", false, "Normalize usernames by removing spaces (merge 'kotaoue' and 'kota oue')")
 	rootCmd.Flags().BoolVar(&detailedStats, "detailed-stats", false, "Enable detailed line change statistics (requires individual API calls per commit - slower)")
@@ -190,6 +190,9 @@ func outputResults(allMetrics []models.Metrics, period *services.Chronometer) {
 	if format == "csv" {
 		csv := formatter.NewMetricsCsv(allMetrics)
 		csv.Output(byUser, detailedStats)
+	} else if format == "json" {
+		jsonFmt := formatter.NewMetricsJson(allMetrics)
+		jsonFmt.Output(byUser, detailedStats)
 	} else {
 		table := formatter.NewMetricsTable(allMetrics)
 		table.Output(byUser, detailedStats)
@@ -245,6 +248,9 @@ func outputCommitResults(allCommits []models.Commit, period *services.Chronomete
 	if format == "csv" {
 		csv := formatter.NewCommitsCsv(allCommits)
 		csv.Output(detailedStats)
+	} else if format == "json" {
+		jsonFmt := formatter.NewCommitsJson(allCommits)
+		jsonFmt.Output(detailedStats)
 	} else {
 		table := formatter.NewCommitsTable(allCommits)
 		table.Output(detailedStats)

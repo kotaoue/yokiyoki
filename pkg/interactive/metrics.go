@@ -239,18 +239,20 @@ func (m *Metrics) GetByUser() bool {
 	return m.prompt.PromptSingleChoice(config).(bool)
 }
 
-// GetFormat prompts user to select output format (markdown or csv)
+// GetFormat prompts user to select output format (markdown, csv, or json)
 func (m *Metrics) GetFormat() string {
 	config := services.SingleChoiceConfig{
 		Messages: []string{
 			m.t("FormatHeader"),
 			"1) Markdown",
 			"2) CSV",
+			"3) JSON",
 			m.t("ChoiceDefault1"),
 		},
 		Options: []services.PromptOption{
 			{Key: "1", Label: "markdown", Value: "markdown"},
 			{Key: "2", Label: "csv", Value: "csv"},
+			{Key: "3", Label: "json", Value: "json"},
 		},
 		DefaultKey: "1",
 	}

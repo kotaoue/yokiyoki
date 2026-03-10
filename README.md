@@ -57,6 +57,7 @@ Choice (default 2): 1
 Output format:
 1) Markdown
 2) CSV
+3) JSON
 Choice (default 1):
 
 Sort order:
@@ -98,6 +99,32 @@ Analyzing data from 2025-08-21 to 2025-08-28 (7 days)
 ```bash
 # Same settings as the interactive example above
 go run . --days 7 --by-user --normalize-users --detailed-stats --format markdown --sort-by repository kotaoue/chiken kotaoue/gamemo kotaoue/kota.oue.me
+
+# JSON output
+go run . --days 7 --by-user --format json kotaoue/chiken
+```
+
+### JSON output example
+
+```json
+[
+  {
+    "repository": "kotaoue/chiken",
+    "user": "kotaoue",
+    "commits": 9,
+    "lines_added": 602,
+    "lines_deleted": 574,
+    "prs_created": 4,
+    "prs_merged": 4,
+    "pr_merge_rate": "4/4 (100%)",
+    "avg_pr_merge_time": "0d 00h 21m",
+    "issues_created": 1,
+    "issues_closed": 0,
+    "issue_resolve_rate": "0/1 (0%)",
+    "avg_issue_close_time": "-",
+    "open_issues": 1
+  }
+]
 ```
 
 ## Metrics
@@ -156,6 +183,7 @@ Choice (default 2): 1
 Output format:
 1) Markdown
 2) CSV
+3) JSON
 Choice (default 1): 1
 
 
