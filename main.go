@@ -69,9 +69,13 @@ func runCollect(cmd *cobra.Command, args []string) {
 	// Ask for language when running in interactive mode (no repository arguments provided)
 	lang := "en"
 	mode := "metrics"
-	if len(args) == 0 {
+	isInteractive := len(args) == 0
+	if isInteractive {
 		lang = interactive.GetLanguage(services.NewPrompter())
 		mode = interactive.NewMetrics(lang).GetMode()
+		if !cmd.Flags().Changed("format") {
+			format = interactive.NewMetrics(lang).GetFormat()
+		}
 	}
 
 	repos := collectRepositories(cmd, args, lang)
@@ -81,14 +85,14 @@ func runCollect(cmd *cobra.Command, args []string) {
 	}
 
 	if mode == "commits" {
-		collectMissingCommitOptions(cmd, lang)
+		collectMissingCommitOptions(cmd, lang, isInteractive)
 		period := createPeriod()
 		allCommits := processRepositoriesForCommits(repos, period)
 		outputCommitResults(allCommits, period)
 		return
 	}
 
-	collectMissingOptions(cmd, lang)
+	collectMissingOptions(cmd, lang, isInteractive)
 
 	period := createPeriod()
 	allMetrics := processRepositories(repos, period)
@@ -110,12 +114,8 @@ func collectRepositories(cmd *cobra.Command, args []string, lang string) []model
 	return metricsInput.GetRepositories()
 }
 
-func collectMissingOptions(cmd *cobra.Command, lang string) {
+func collectMissingOptions(cmd *cobra.Command, lang string, isInteractive bool) {
 	metricsInput := interactive.NewMetrics(lang)
-
-	if !cmd.Flags().Changed("detailed-stats") {
-		detailedStats = metricsInput.GetDetailedStats()
-	}
 
 	if !cmd.Flags().Changed("days") && !cmd.Flags().Changed("start") && !cmd.Flags().Changed("end") {
 		var err error
@@ -130,7 +130,7 @@ func collectMissingOptions(cmd *cobra.Command, lang string) {
 		byUser = metricsInput.GetByUser()
 	}
 
-	if !cmd.Flags().Changed("format") {
+	if !isInteractive && !cmd.Flags().Changed("format") {
 		format = metricsInput.GetFormat()
 	}
 
@@ -140,6 +140,10 @@ func collectMissingOptions(cmd *cobra.Command, lang string) {
 
 	if !cmd.Flags().Changed("normalize-users") {
 		normalizeUsers = metricsInput.GetNormalizeUsers()
+	}
+
+	if !cmd.Flags().Changed("detailed-stats") {
+		detailedStats = metricsInput.GetDetailedStats()
 	}
 }
 
@@ -199,12 +203,8 @@ func outputResults(allMetrics []models.Metrics, period *services.Chronometer) {
 	}
 }
 
-func collectMissingCommitOptions(cmd *cobra.Command, lang string) {
+func collectMissingCommitOptions(cmd *cobra.Command, lang string, isInteractive bool) {
 	metricsInput := interactive.NewMetrics(lang)
-
-	if !cmd.Flags().Changed("detailed-stats") {
-		detailedStats = metricsInput.GetDetailedStats()
-	}
 
 	if !cmd.Flags().Changed("days") && !cmd.Flags().Changed("start") && !cmd.Flags().Changed("end") {
 		var err error
@@ -215,8 +215,12 @@ func collectMissingCommitOptions(cmd *cobra.Command, lang string) {
 		}
 	}
 
-	if !cmd.Flags().Changed("format") {
+	if !isInteractive && !cmd.Flags().Changed("format") {
 		format = metricsInput.GetFormat()
+	}
+
+	if !cmd.Flags().Changed("detailed-stats") {
+		detailedStats = metricsInput.GetDetailedStats()
 	}
 }
 
