@@ -2,7 +2,7 @@
 other = "Select language / 表示言語を選択してください:"
 
 [ModeHeader]
-other = "\nモード:"
+other = "モード:"
 
 [ModeMetrics]
 other = "1) メトリクス取得"
@@ -17,7 +17,7 @@ other = "1) English"
 other = "2) 日本語 (Japanese)"
 
 [RepoInputHeader]
-other = "\nリポジトリを入力してください (形式: owner/repo-name)"
+other = "リポジトリを入力してください (形式: owner/repo-name)"
 
 [RepoInputDone]
 other = "終了する場合は 'done' と入力:"
@@ -26,10 +26,10 @@ other = "終了する場合は 'done' と入力:"
 other = "追加: {{.Name}}"
 
 [DaysInput]
-other = "\n分析する日数を入力してください (default 30): "
+other = "分析する日数を入力してください (default 30): "
 
 [PeriodHeader]
-other = "\n期間:"
+other = "期間:"
 
 [Last7Days]
 other = "1) 過去7日間      "

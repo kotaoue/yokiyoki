@@ -2,7 +2,7 @@
 other = "Select language / 表示言語を選択してください:"
 
 [ModeHeader]
-other = "\nMode:"
+other = "Mode:"
 
 [ModeMetrics]
 other = "1) Metrics"
@@ -17,7 +17,7 @@ other = "1) English"
 other = "2) 日本語 (Japanese)"
 
 [RepoInputHeader]
-other = "\nEnter repository (format: owner/repo-name)"
+other = "Enter repository (format: owner/repo-name)"
 
 [RepoInputDone]
 other = "Type 'done' to finish:"
@@ -26,10 +26,10 @@ other = "Type 'done' to finish:"
 other = "Added: {{.Name}}"
 
 [DaysInput]
-other = "\nEnter the number of days to analyze (default 30): "
+other = "Enter the number of days to analyze (default 30): "
 
 [PeriodHeader]
-other = "\nPeriod:"
+other = "Period:"
 
 [Last7Days]
 other = "1) Last 7 days    "
