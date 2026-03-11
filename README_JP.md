@@ -20,6 +20,7 @@ Choice (default 1): 2
 モード:
 1) メトリクス取得
 2) コミット一覧取得
+3) 会話一覧取得
 Choice (default 1): 
 
 出力フォーマット:
@@ -158,6 +159,7 @@ Choice (default 1): 2
 モード:
 1) メトリクス取得
 2) コミット一覧取得
+3) 会話一覧取得
 Choice (default 1): 2
 
 出力フォーマット:
@@ -205,3 +207,70 @@ Analyzing data from 2025-08-21 to 2025-08-28 (7 days)
 | Date       | コミット日時 (形式: YYYY-MM-DD HH:mm)                       |
 | Message    | コミットメッセージの1行目 (72文字で切り捨て)                |
 | Lines +/-  | 追加・削除行数 (--detailed-stats 使用時)                    |
+
+## 会話一覧モード
+
+モード選択で **3) 会話一覧取得** を選ぶと、PRとIssueの説明文とコメントを日時昇順 (古い順) で取得・表示します。
+
+### インタラクティブ例
+
+```bash
+$ go run .
+GitHub Metrics Collector
+========================
+
+Select language / 表示言語を選択してください:
+1) English
+2) 日本語 (Japanese)
+Choice (default 1): 2
+
+モード:
+1) メトリクス取得
+2) コミット一覧取得
+3) 会話一覧取得
+Choice (default 1): 3
+
+出力フォーマット:
+1) Markdown
+2) CSV
+3) JSON
+Choice (default 1): 1
+
+リポジトリを入力してください (形式: owner/repo-name)
+終了する場合は 'done' と入力:
+> kotaoue/yokiyoki
+追加: kotaoue/yokiyoki
+> done
+
+期間:
+1) 過去7日間      (2025-08-21 to 2025-08-28 JST)
+2) 過去30日間     (2025-07-29 to 2025-08-28 JST)
+...
+Choice (default 2): 1
+
+
+Processing repository: kotaoue/yokiyoki
+Found 9 pull requests for kotaoue/yokiyoki
+Processing 9 pull requests...
+Found 8 issues for kotaoue/yokiyoki
+Processing 8 issues...
+Report
+Analyzing data from 2025-08-21 to 2025-08-28 (7 days)
+
+| Repository        | Type | # | Title                | Author  | Date             | Body                                         |
+|-------------------|------|---|----------------------|---------|------------------|----------------------------------------------|
+| kotaoue/yokiyoki  | pr   | 19 | Fix prompt order    | copilot | 2025-08-28 10:00 | The interactive prompt order was unintuitive… |
+| kotaoue/yokiyoki  | pr   | 19 | Fix prompt order    | kotaoue | 2025-08-28 11:30 | @copilot 並び順は変更してもらったものでOK…   |
+```
+
+### 会話一覧の列
+
+| Column     | Description                                           |
+|------------|-------------------------------------------------------|
+| Repository | リポジトリ名                                          |
+| Type       | 種別: `pr` または `issue`                             |
+| #          | PRまたはIssueの番号                                   |
+| Title      | PRまたはIssueのタイトル                               |
+| Author     | コメント (または説明文) の投稿者                      |
+| Date       | コメント日時 (形式: YYYY-MM-DD HH:mm)                 |
+| Body       | コメント本文 (72文字で切り捨て)                       |

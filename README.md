@@ -21,6 +21,7 @@ Choice (default 1):
 Mode:
 1) Metrics
 2) Commit list
+3) Conversation list
 Choice (default 1): 
 
 Output format:
@@ -159,6 +160,7 @@ Choice (default 1): 1
 Mode:
 1) Metrics
 2) Commit list
+3) Conversation list
 Choice (default 1): 2
 
 Output format:
@@ -206,3 +208,70 @@ Analyzing data from 2025-08-21 to 2025-08-28 (7 days)
 | Date       | Commit date (JST, format: YYYY-MM-DD HH:mm)                 |
 | Message    | First line of the commit message (truncated at 72 chars)    |
 | Lines +/-  | Lines added / deleted (shown when using `--detailed-stats`) |
+
+## Conversation List Mode
+
+Select **3) Conversation list** at the mode prompt to retrieve all PR and issue descriptions and comments sorted by date (oldest first).
+
+### Interactive example
+
+```bash
+$ go run .
+GitHub Metrics Collector
+========================
+
+Select language / 表示言語を選択してください:
+1) English
+2) 日本語 (Japanese)
+Choice (default 1): 1
+
+Mode:
+1) Metrics
+2) Commit list
+3) Conversation list
+Choice (default 1): 3
+
+Output format:
+1) Markdown
+2) CSV
+3) JSON
+Choice (default 1): 1
+
+Enter repository (format: owner/repo-name)
+Type 'done' to finish:
+> kotaoue/yokiyoki
+Added: kotaoue/yokiyoki
+> done
+
+Period:
+1) Last 7 days    (2025-08-21 to 2025-08-28 JST)
+2) Last 30 days   (2025-07-29 to 2025-08-28 JST)
+...
+Choice (default 2): 1
+
+
+Processing repository: kotaoue/yokiyoki
+Found 9 pull requests for kotaoue/yokiyoki
+Processing 9 pull requests...
+Found 8 issues for kotaoue/yokiyoki
+Processing 8 issues...
+Report
+Analyzing data from 2025-08-21 to 2025-08-28 (7 days)
+
+| Repository        | Type | # | Title                | Author  | Date             | Body                                         |
+|-------------------|------|---|----------------------|---------|------------------|----------------------------------------------|
+| kotaoue/yokiyoki  | pr   | 19 | Fix prompt order    | copilot | 2025-08-28 10:00 | The interactive prompt order was unintuitive… |
+| kotaoue/yokiyoki  | pr   | 19 | Fix prompt order    | kotaoue | 2025-08-28 11:30 | @copilot 並び順は変更してもらったものでOK…   |
+```
+
+### Conversation list columns
+
+| Column     | Description                                                       |
+|------------|-------------------------------------------------------------------|
+| Repository | Repository name                                                   |
+| Type       | Entry type: `pr` or `issue`                                       |
+| #          | PR or issue number                                                |
+| Title      | PR or issue title                                                 |
+| Author     | Author of the comment (or PR/issue description)                   |
+| Date       | Comment date (JST, format: YYYY-MM-DD HH:mm)                      |
+| Body       | Comment body (truncated at 72 chars)                              |
