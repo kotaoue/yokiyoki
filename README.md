@@ -23,6 +23,12 @@ Mode:
 2) Commit list
 Choice (default 1): 
 
+Output format:
+1) Markdown
+2) CSV
+3) JSON
+Choice (default 1):
+
 Enter repository (format: owner/repo-name)
 Type 'done' to finish:
 > kotaoue/chiken
@@ -32,12 +38,6 @@ Added: kotaoue/gamemo
 > kotaoue/kota.oue.me
 Added: kotaoue/kota.oue.me
 > done
-
-Fetch metrics by checking individual PRs? (slower)
-1) Yes
-2) No
-Choice (default 2): 1
-
 
 Period:
 1) Last 7 days    (2025-08-21 to 2025-08-28 JST)
@@ -54,12 +54,6 @@ Break down metrics by user?
 2) No
 Choice (default 2): 1
 
-Output format:
-1) Markdown
-2) CSV
-3) JSON
-Choice (default 1):
-
 Sort order:
 1) repository
 2) repository,user
@@ -67,6 +61,11 @@ Sort order:
 Choice (default 1):
 
 Normalize usernames (merge 'kotaoue' and 'kota oue')?
+1) Yes
+2) No
+Choice (default 2): 1
+
+Fetch metrics by checking individual PRs? (slower)
 1) Yes
 2) No
 Choice (default 2): 1
@@ -162,17 +161,17 @@ Mode:
 2) Commit list
 Choice (default 1): 2
 
+Output format:
+1) Markdown
+2) CSV
+3) JSON
+Choice (default 1): 1
+
 Enter repository (format: owner/repo-name)
 Type 'done' to finish:
 > kotaoue/chiken
 Added: kotaoue/chiken
 > done
-
-Fetch metrics by checking individual PRs? (slower)
-1) Yes
-2) No
-Choice (default 2): 2
-
 
 Period:
 1) Last 7 days    (2025-08-21 to 2025-08-28 JST)
@@ -180,11 +179,10 @@ Period:
 ...
 Choice (default 2): 1
 
-Output format:
-1) Markdown
-2) CSV
-3) JSON
-Choice (default 1): 1
+Fetch metrics by checking individual PRs? (slower)
+1) Yes
+2) No
+Choice (default 2): 2
 
 
 Processing repository: kotaoue/chiken

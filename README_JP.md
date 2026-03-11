@@ -22,6 +22,12 @@ Choice (default 1): 2
 2) コミット一覧取得
 Choice (default 1): 
 
+出力フォーマット:
+1) Markdown
+2) CSV
+3) JSON
+Choice (default 1):  
+
 リポジトリを入力してください (形式: owner/repo-name)
 終了する場合は 'done' と入力:
 > kotaoue/chiken
@@ -31,12 +37,6 @@ Choice (default 1):
 > kotaoue/kota.oue.me
 追加: kotaoue/kota.oue.me
 > done
-
-個別のPRを確認してメトリクスを取得しますか? (処理が遅くなります)
-1) Yes
-2) No
-Choice (default 2): 1
-
 
 期間:
 1) 過去7日間      (2025-08-21 to 2025-08-28 JST)
@@ -53,12 +53,6 @@ Choice (default 2): 1
 2) No
 Choice (default 2): 1
 
-出力フォーマット:
-1) Markdown
-2) CSV
-3) JSON
-Choice (default 1):  
-
 ソート順:
 1) リポジトリ
 2) リポジトリ,ユーザー
@@ -66,6 +60,11 @@ Choice (default 1):
 Choice (default 1): 
 
 ユーザー名を正規化しますか ('kotaoue' と 'kota oue' をマージ)?
+1) Yes
+2) No
+Choice (default 2): 1
+
+個別のPRを確認してメトリクスを取得しますか? (処理が遅くなります)
 1) Yes
 2) No
 Choice (default 2): 1
@@ -161,17 +160,17 @@ Choice (default 1): 2
 2) コミット一覧取得
 Choice (default 1): 2
 
+出力フォーマット:
+1) Markdown
+2) CSV
+3) JSON
+Choice (default 1): 1
+
 リポジトリを入力してください (形式: owner/repo-name)
 終了する場合は 'done' と入力:
 > kotaoue/chiken
 追加: kotaoue/chiken
 > done
-
-個別のPRを確認してメトリクスを取得しますか? (処理が遅くなります)
-1) Yes
-2) No
-Choice (default 2): 2
-
 
 期間:
 1) 過去7日間      (2025-08-21 to 2025-08-28 JST)
@@ -179,11 +178,10 @@ Choice (default 2): 2
 ...
 Choice (default 2): 1
 
-出力フォーマット:
-1) Markdown
-2) CSV
-3) JSON
-Choice (default 1): 1
+個別のPRを確認してメトリクスを取得しますか? (処理が遅くなります)
+1) Yes
+2) No
+Choice (default 2): 2
 
 
 Processing repository: kotaoue/chiken
