@@ -10,6 +10,9 @@ other = "1) Metrics"
 [ModeCommits]
 other = "2) Commit list"
 
+[ModeConversations]
+other = "3) Conversation list"
+
 [LanguageEnglish]
 other = "1) English"
 

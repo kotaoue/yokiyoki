@@ -92,6 +92,14 @@ func runCollect(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	if mode == "conversations" {
+		collectMissingConversationOptions(cmd, lang, isInteractive)
+		period := createPeriod()
+		allComments := processRepositoriesForConversations(repos, period)
+		outputConversationResults(allComments, period)
+		return
+	}
+
 	collectMissingOptions(cmd, lang, isInteractive)
 
 	period := createPeriod()
@@ -258,5 +266,57 @@ func outputCommitResults(allCommits []models.Commit, period *services.Chronomete
 	} else {
 		table := formatter.NewCommitsTable(allCommits)
 		table.Output(detailedStats)
+	}
+}
+
+func collectMissingConversationOptions(cmd *cobra.Command, lang string, isInteractive bool) {
+	metricsInput := interactive.NewMetrics(lang)
+
+	if !cmd.Flags().Changed("days") && !cmd.Flags().Changed("start") && !cmd.Flags().Changed("end") {
+		var err error
+		days, startDate, endDate, err = metricsInput.GetPeriod()
+		if err != nil {
+			fmt.Printf("Error getting period: %v\n", err)
+			os.Exit(1)
+		}
+	}
+
+	if !isInteractive && !cmd.Flags().Changed("format") {
+		format = metricsInput.GetFormat()
+	}
+}
+
+func processRepositoriesForConversations(repos []models.Repository, period *services.Chronometer) []models.Comment {
+	var allComments []models.Comment
+
+	fmt.Println()
+	for _, repo := range repos {
+		fmt.Printf("Processing repository: %s/%s\n", repo.Owner, repo.Name)
+		opts := services.ConversationsOptions{
+			Period: period,
+		}
+		comments := services.ExecuteConversations(repo, opts)
+		allComments = append(allComments, comments...)
+	}
+
+	return allComments
+}
+
+func outputConversationResults(allComments []models.Comment, period *services.Chronometer) {
+	fmt.Println("Report")
+	fmt.Printf("Analyzing data from %s to %s (%d days)\n\n",
+		period.StartTime().Format("2006-01-02"),
+		period.EndTime().Format("2006-01-02"),
+		days)
+
+	if format == "csv" {
+		csv := formatter.NewConversationsCsv(allComments)
+		csv.Output()
+	} else if format == "json" {
+		jsonFmt := formatter.NewConversationsJson(allComments)
+		jsonFmt.Output()
+	} else {
+		table := formatter.NewConversationsTable(allComments)
+		table.Output()
 	}
 }

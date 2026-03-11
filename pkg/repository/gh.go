@@ -41,6 +41,10 @@ func GetPullRequests(repo models.Repository, since time.Time) []models.PullReque
 			CreatedAt: parseCreatedAt(raw),
 		}
 
+		if body, ok := raw["body"].(string); ok {
+			pr.Body = body
+		}
+
 		if mergedTime := parseTimeField(raw, "merged_at"); mergedTime != nil {
 			pr.MergedAt = mergedTime
 		}
@@ -123,6 +127,14 @@ func GetIssues(repo models.Repository, since time.Time) []models.Issue {
 			Labels:    parseLabels(raw),
 		}
 
+		if body, ok := raw["body"].(string); ok {
+			issue.Body = body
+		}
+
+		if url, ok := raw["html_url"].(string); ok {
+			issue.URL = url
+		}
+
 		if closedTime := parseTimeField(raw, "closed_at"); closedTime != nil {
 			issue.ClosedAt = closedTime
 		}
@@ -131,6 +143,32 @@ func GetIssues(repo models.Repository, since time.Time) []models.Issue {
 	}
 
 	return issues
+}
+
+// GetComments fetches the issue-level comments (general conversation thread) for the
+// given PR or issue number. Both PRs and plain issues share the same comments endpoint.
+func GetComments(repo models.Repository, number int) []models.Comment {
+	endpoint := fmt.Sprintf("/repos/%s/%s/issues/%d/comments", repo.Owner, repo.Name, number)
+	rawComments, err := Executor(endpoint, repo, "comments")
+	if err != nil {
+		fmt.Printf("Warning: %v\n", err)
+		return []models.Comment{}
+	}
+
+	var comments []models.Comment
+	for _, raw := range rawComments {
+		body, _ := raw["body"].(string)
+		url, _ := raw["html_url"].(string)
+		comment := models.Comment{
+			Author:    parseUser(raw),
+			Body:      body,
+			URL:       url,
+			CreatedAt: parseCreatedAt(raw),
+		}
+		comments = append(comments, comment)
+	}
+
+	return comments
 }
 
 func execute(endpoint string, repo models.Repository, resourceType string) ([]map[string]any, error) {
