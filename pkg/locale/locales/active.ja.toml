@@ -10,6 +10,9 @@ other = "1) メトリクス取得"
 [ModeCommits]
 other = "2) コミット一覧取得"
 
+[ModeConversations]
+other = "3) 会話一覧取得"
+
 [LanguageEnglish]
 other = "1) English"
 

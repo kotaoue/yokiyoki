@@ -23,7 +23,7 @@ func fetchPRsWithGHCommand(repo models.Repository, searchQuery string) []map[str
 		"--state", "all",
 		"--search", searchQuery,
 		"--limit", "1000",
-		"--json", "number,title,state,author,createdAt,mergedAt,closedAt,url,additions,deletions")
+		"--json", "number,title,state,author,createdAt,mergedAt,closedAt,url,additions,deletions,body")
 
 	output, err := cmd.Output()
 	if err != nil {
@@ -48,7 +48,7 @@ func fetchIssuesWithGHCommand(repo models.Repository, searchQuery string) []map[
 		"--state", "all",
 		"--search", searchQuery,
 		"--limit", "1000",
-		"--json", "number,title,state,author,createdAt,closedAt,labels")
+		"--json", "number,title,state,author,createdAt,closedAt,labels,url,body")
 
 	output, err := cmd.Output()
 	if err != nil {
@@ -101,6 +101,10 @@ func parsePRsFromJSON(rawPRs []map[string]any, owner, name string) []models.Pull
 			pr.Deletions = int(deletions)
 		}
 
+		if body, ok := raw["body"].(string); ok {
+			pr.Body = body
+		}
+
 		prs = append(prs, pr)
 	}
 
@@ -129,6 +133,14 @@ func parseIssuesFromJSON(rawIssues []map[string]any, owner, name string) []model
 
 		if closedTime := parseTimeFieldFromJSON(raw, "closedAt"); closedTime != nil {
 			issue.ClosedAt = closedTime
+		}
+
+		if body, ok := raw["body"].(string); ok {
+			issue.Body = body
+		}
+
+		if url, ok := raw["url"].(string); ok {
+			issue.URL = url
 		}
 
 		issues = append(issues, issue)
